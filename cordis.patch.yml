@@ -1,0 +1,16 @@
+# dsh-glm-image —— DSH bundle patch
+# 把插件挂进 profile 的配置树（bundle 层）。安装：plugin_manager install_bundle 本地目录，
+# 或 npm 安装 dsh-glm-image 后由 Loader 载入本行。
+- insert:
+    - id: glm-image
+      name: dsh-glm-image
+      config:
+        # 智谱 API Key（可选预填）：留空则在插件页配置面板填写
+        #   · 获取：https://open.bigmodel.cn → 注册 → API 密钥
+        #   · ⚠️ 别把自己的 Key 提交到公开仓库
+        apiKey: ""
+        model: glm-image
+        size: 1280x1280
+        quality: hd
+        watermark: true
+        saveDirectory: glm-images
