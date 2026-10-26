@@ -114,8 +114,14 @@ async function generateImage(baseURL, apiKey, payload, signal) {
   throw lastError;
 }
 
-/** 依据 Content-Type 与 URL 判定图片媒体类型。 */
-function sniffMediaType(contentType, url) {
+/** 依据文件头魔数判定真实图片媒体类型（优先），再退回 Content-Type / URL 提示。 */
+function sniffMediaType(data, contentType, url) {
+  const b = data;
+  if (b.length >= 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "image/png";
+  if (b.length >= 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "image/jpeg";
+  if (b.length >= 12 && b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46
+    && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50) return "image/webp";
+  if (b.length >= 6 && b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38) return "image/gif";
   const source = `${contentType ?? ""} ${url ?? ""}`.toLowerCase();
   if (source.includes("png")) return "image/png";
   if (source.includes("webp")) return "image/webp";
@@ -247,7 +253,7 @@ export function apply(ctx, config) {
       if (!download.ok) throw new Error(`下载生成图片失败：HTTP ${download.status}`);
       const data = new Uint8Array(await download.arrayBuffer());
       if (data.length === 0) throw new Error("下载到的图片为空。");
-      const mediaType = sniffMediaType(download.headers.get("content-type"), url);
+      const mediaType = sniffMediaType(data, download.headers.get("content-type"), url);
 
       // 保存到当前会话工作目录。
       const workingDirectory = ctx.get("workingDirectory");
@@ -275,7 +281,15 @@ export function apply(ctx, config) {
             height: ref.height,
             ...(ref.name === undefined ? {} : { name: ref.name }),
           };
-        } catch {
+        } catch (error) {
+          // 附件失败不阻断图片保存，但记日志便于排查“图没显示”的原因。
+          try {
+            writeFileSync(
+              join(process.env.DSH_HOME || join(os.homedir(), ".dsh"), "glm-image-attach-error.log"),
+              `${new Date().toISOString()} saveImage failed: ${String(error?.stack ?? error)}\n`,
+              { flag: "a" }
+            );
+          } catch {}
           image = undefined;
         }
       }
