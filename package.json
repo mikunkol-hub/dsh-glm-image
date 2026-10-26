@@ -1,6 +1,6 @@
 {
   "name": "dsh-glm-image",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "DeepSeek Harness 插件：接入智谱 GLM-Image 文生图模型，为 Agent 提供 generate_image 图片生成工具，并在插件页提供配置面板（API Key、模型、尺寸、画质、水印、保存目录）。",
   "type": "module",
   "main": "index.js",
