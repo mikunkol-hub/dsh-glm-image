@@ -1,0 +1,48 @@
+{
+  "name": "dsh-glm-image",
+  "version": "0.1.0",
+  "description": "DeepSeek Harness 插件：接入智谱 GLM-Image 文生图模型，为 Agent 提供 generate_image 图片生成工具，并在插件页提供配置面板（API Key、模型、尺寸、画质、水印、保存目录）。",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "vendor",
+    "THIRD_PARTY_NOTICES.md",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": []
+    }
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "glm-image",
+    "zhipu",
+    "text-to-image",
+    "image-generation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikunkol-hub/dsh-glm-image.git"
+  },
+  "homepage": "https://github.com/mikunkol-hub/dsh-glm-image#readme",
+  "bugs": {
+    "url": "https://github.com/mikunkol-hub/dsh-glm-image/issues"
+  },
+  "license": "MIT"
+}
